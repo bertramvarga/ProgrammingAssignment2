@@ -1,31 +1,28 @@
-## Create a subclass for matrix that contains the inverse, S4 style - Yepp, in R, you can apparently subclass built-in types :/ - 
-
-CachedMatrix = setClass("CachedMatrix", prototype = matrix(), slots = c(.Data='matrix', inverse='matrix'))
-
-## Just build the default stuff 
-makeCacheMatrix <- function(x = matrix()) {
-  CachedMatrix(x)
-}
-
-## The definitions for each version.
-cacheSolve <- function(x, ...){
-  UseMethod("cacheSolve", x)
-}
-
-cacheSolve.default <- function(x, ...){
-  stop("Argument is Not a matrix")
-}
-
-cacheSolve.matrix <- function(x, ...){
-  x = makeCacheMatrix(x)
-  cacheSolve(x)
-}
-
-
-cacheSolve.CachedMatrix <- function(x, ...) {
-  ## Return a matrix that is the inverse of 'x'
-  if(length(x@inverse)==0){
-    x@inverse = solve(x)
+makeMatrix <- function(x = matrix()) {
+  inv <- NULL
+  m <- x
+  set <- function(y) {
+    m <<- y
+    inv <<- NULL
   }
-  x@inverse
+  get <- function() m
+  setinv <- function(inverse) inv <<- inverse
+  getinv <- function() inv
+  list(set = set, get = get,
+       setinv = setinv,
+       getinv = getinv)
+}
+
+cacheInverse <- function(x, ...) {
+  inv <- x$getinv()
+  if(!is.null(inv)) {
+    message("getting cached data")
+    return(inv)
+  }
+  data <- x$get()
+  print(data)
+  inv <- solve(data, ...)
+  x$setinv(inv)
+  inv
+  
 }
