@@ -1,3 +1,8 @@
+
+#' Creates a matrix-like list that can cache it's inverse.
+#' @param x Input matrix. Default to matrix's default
+#' @return A list with the following functions: set, get, setinv, getinv
+#'
 makeCacheMatrix <- function(x = matrix()) {
   inv <- NULL
   m <- x
@@ -13,6 +18,9 @@ makeCacheMatrix <- function(x = matrix()) {
        getinv = getinv)
 }
 
+#' Calculates the inverse of a cacheMatrix or returns the previous calculation
+#' @param x cacheMatrix instance
+#' @return inverse of x
 cacheInverse <- function(x, ...) {
   inv <- x$getinv()
   if(!is.null(inv)) {
